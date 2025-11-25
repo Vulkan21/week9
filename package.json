@@ -1,14 +1,18 @@
 {
-  "name": "week8-server",
+  "name": "week9-server",
   "version": "1.0.0",
-  "description": "Week 8 assignment server",
+  "description": "Week 9 assignment server",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "postinstall": "node -e \"console.log('Puppeteer install optimized')\""
   },
   "dependencies": {
     "express": "^4.18.2",
-    "puppeteer": "^21.5.0"
+    "puppeteer": "^23.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
 
