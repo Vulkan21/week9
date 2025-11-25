@@ -10,15 +10,28 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/login/', (_, res) => {
-  res.send('c5803a15-0cfc-4719-ab77-c604044c9c5a');
+// Отключаем строгую проверку Content-Type
+app.disable('etag');
+
+// Обработка OPTIONS для CORS
+app.options('*', (req, res) => {
+  res.sendStatus(200);
+});
+
+// Корневой маршрут
+app.get('/', (req, res) => {
+  res.type('text/plain').send('Week 9 Server - Use /login/ or /test/?URL=...');
+});
+
+app.get('/login/', (req, res) => {
+  res.type('text/plain').send('c5803a15-0cfc-4719-ab77-c604044c9c5a');
 });
 
 app.get('/test/', async (req, res) => {
   const targetURL = req.query.URL;
 
   if (!targetURL) {
-    return res.status(400).send('URL parameter is required');
+    return res.type('text/plain').status(400).send('URL parameter is required');
   }
 
   let browser;
@@ -33,7 +46,7 @@ app.get('/test/', async (req, res) => {
       ]
     });
   } catch (error) {
-    return res.status(500).send(`Error launching browser: ${error.message}`);
+    return res.type('text/plain').status(500).send(`Error launching browser: ${error.message}`);
   }
 
   try {
@@ -55,16 +68,15 @@ app.get('/test/', async (req, res) => {
     await browser.close();
 
     if (!result) {
-      return res.status(500).send('Error: Could not get result from input field');
+      return res.type('text/plain').status(500).send('Error: Could not get result from input field');
     }
 
-    res.setHeader('Content-Type', 'text/plain');
-    res.send(result);
+    res.type('text/plain').send(result);
   } catch (error) {
     if (browser) {
       await browser.close().catch(() => {});
     }
-    res.status(500).send(`Error: ${error.message}`);
+    res.type('text/plain').status(500).send(`Error: ${error.message}`);
   }
 });
 
