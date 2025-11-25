@@ -1,5 +1,6 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
+const chromium = require('@sparticuz/chromium');
 
 const app = express();
 
@@ -36,16 +37,18 @@ app.get('/test/', async (req, res) => {
 
   let browser;
   try {
+    const isProduction = process.env.NODE_ENV === 'production';
+    
     browser = await puppeteer.launch({
-      headless: true,
-      args: [
+      args: isProduction ? chromium.args : [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--single-process',
-        '--no-zygote'
-      ]
+        '--disable-gpu'
+      ],
+      defaultViewport: chromium.defaultViewport,
+      executablePath: isProduction ? await chromium.executablePath() : puppeteer.executablePath(),
+      headless: isProduction ? chromium.headless : true
     });
   } catch (error) {
     return res.type('text/plain').status(500).send(`Error launching browser: ${error.message}`);
